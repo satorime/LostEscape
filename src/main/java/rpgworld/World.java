@@ -135,8 +135,9 @@ public class World extends Application {
     }
 
     public void loadGame(Stage stage) {
-        musicManager.stopBackgroundMusic();
-        new Thread(() -> musicManager.playBackgroundMusic("game-background.mp3")).start();
+//        musicManager.stopBackgroundMusic();
+//        new Thread(() -> musicManager.playBackgroundMusic("game-background.mp3")).start();
+        musicManager.changeBackgroundMusic("game-background.mp3");
 
         root = new Pane();
         Scene scene2 = new Scene(root, 737, 800);
