@@ -18,6 +18,8 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -42,11 +44,14 @@ public class Character {
     boolean foundKey = false;
     boolean nearKey = false;
 
+    private long startTime;
+
     public Character(Pane root, Stage stage, Scene scene, LinkedList<ObstacleTile> barrier, ImageView dialog, Text dialogText, ImageView key, ImageView character_image) {
         this.barrier = barrier;
         this.character_image = character_image;
         this.root = root;
         this.stage = stage;
+        startTime = System.currentTimeMillis();
 
         // Initialize the Character's Walking Images Lists
         walkingUpImageList = new ArrayList<Image>();
@@ -184,6 +189,10 @@ public class Character {
         timer.start();
     }
 
+    public long getTimeTaken() {
+        return (System.currentTimeMillis() - startTime) / 1000; // Return the time taken in seconds
+    }
+
     // Move character in the correct direction and also check for key/exit
     private void moveCharacter(int dx, int dy) {
         if (dx != 0 || dy != 0) {  // Only move if character has "speed" - added/subtracted from the key presses
@@ -208,6 +217,7 @@ public class Character {
             // Check if character found key and is near the door
             // Won the game!
             if (foundKey && x >= 137 && x <= 257 && y >= 757 && y <= 778) {
+                long timeTaken = getTimeTaken(); // Get the time taken by the user
                 timer.stop(); // Need to end animation timer or else it will keep entering this if statement and pop up the win screen infinitely
                 root = new Pane();
                 Scene scene = new Scene(root, 737, 800);
@@ -216,7 +226,7 @@ public class Character {
                 stage.show();
 
                 // Set background image
-                Image backgroundImage = new Image("titlemenu.png");
+                Image backgroundImage = new Image("menu.jpg");
                 BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
                 Background background = new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
                 root.setBackground(background);
@@ -226,6 +236,13 @@ public class Character {
                 title.setLayoutX(160);
                 title.setLayoutY(275);
                 root.getChildren().add(title);
+
+                // Display the time taken
+                Text timeText = new Text("Time taken: " + timeTaken + " seconds");
+                timeText.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+                timeText.setLayoutX(230);
+                timeText.setLayoutY(450);
+                root.getChildren().add(timeText);
             }
         }
         else { character_image.setImage(new Image(standingImage)); }  // if not moving, set character image to standing image
