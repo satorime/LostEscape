@@ -31,17 +31,17 @@ application {
 
 javafx {
   version = '17.0.6'
-  modules = ['javafx.controls', 'javafx.fxml']
+  modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
 }
 
 dependencies {
-
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {
-useJUnitPlatform()}
+  useJUnitPlatform()
+}
 
 jlink {
   imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")

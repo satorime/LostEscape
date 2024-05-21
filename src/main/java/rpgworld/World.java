@@ -34,6 +34,8 @@ public class World extends Application {
     Text timerDisplay;
     Timer timer;
     Stage mainStage;
+    private MusicManager musicManager;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -42,7 +44,7 @@ public class World extends Application {
     @Override
     public void start(Stage stage) {
         // First show game starting screen
-
+        musicManager = new MusicManager();
         mainStage = stage;
 
         root = new Pane();
@@ -50,6 +52,8 @@ public class World extends Application {
         stage.setTitle("Starting Menu");
         stage.setScene(scene);
         stage.show();
+
+        new Thread(() -> musicManager.playBackgroundMusic("background.mp3")).start();
 
         // Set starting screen background image
         Image startBackground = new Image("menu.jpg");
@@ -131,6 +135,9 @@ public class World extends Application {
     }
 
     public void loadGame(Stage stage) {
+        musicManager.stopBackgroundMusic();
+        new Thread(() -> musicManager.playBackgroundMusic("game-background.mp3")).start();
+
         root = new Pane();
         Scene scene2 = new Scene(root, 737, 800);
         stage.setTitle("Escape the Room");
@@ -210,7 +217,7 @@ public class World extends Application {
         root.getChildren().add(dialog_text);
 
         // Create character
-        character = new Character(root, stage, scene2, barrier, dialog, dialog_text, key, character_image);  // The Character constructor adds functionality and event handlers to scene
+        character = new Character(root, stage, scene2, barrier, dialog, dialog_text, key, character_image, musicManager);  // The Character constructor adds functionality and event handlers to scene
     }
 
     public void createObstacleTile(double w, double h, double x, double y) {

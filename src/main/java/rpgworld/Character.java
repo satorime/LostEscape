@@ -45,12 +45,15 @@ public class Character {
     boolean nearKey = false;
 
     private long startTime;
+    private MusicManager musicManager;
 
-    public Character(Pane root, Stage stage, Scene scene, LinkedList<ObstacleTile> barrier, ImageView dialog, Text dialogText, ImageView key, ImageView character_image) {
+
+    public Character(Pane root, Stage stage, Scene scene, LinkedList<ObstacleTile> barrier, ImageView dialog, Text dialogText, ImageView key, ImageView character_image, MusicManager musicManager) {
         this.barrier = barrier;
         this.character_image = character_image;
         this.root = root;
         this.stage = stage;
+        this.musicManager = musicManager;
         startTime = System.currentTimeMillis();
 
         // Initialize the Character's Walking Images Lists
