@@ -23,6 +23,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import rpgworld.Scene.LoginScene;
+import rpgworld.Server.DatabaseManager;
+
+import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class World extends Application {
 
@@ -34,7 +40,8 @@ public class World extends Application {
     Text timerDisplay;
     Timer timer;
     Stage mainStage;
-    private MusicManager musicManager;
+    private MusicManager musicManager = new MusicManager(); // Initialize musicManager here
+
 
 
     public static void main(String[] args) {
@@ -47,6 +54,11 @@ public class World extends Application {
         musicManager = new MusicManager();
         mainStage = stage;
 
+        stage.setScene(new LoginScene().getLoginScene(stage));
+        stage.setTitle("Login");
+        stage.show();
+    }
+    public void startGame(Stage stage){
         root = new Pane();
         Scene scene = new Scene(root, 1000, 562);
         stage.setTitle("Starting Menu");
@@ -135,15 +147,13 @@ public class World extends Application {
     }
 
     public void loadGame(Stage stage) {
-//        musicManager.stopBackgroundMusic();
-//        new Thread(() -> musicManager.playBackgroundMusic("game-background.mp3")).start();
         musicManager.changeBackgroundMusic("game-background.mp3");
 
         root = new Pane();
         Scene scene2 = new Scene(root, 737, 800);
         stage.setTitle("Escape the Room");
 
-        startTimer(stage);
+        startTimer(mainStage);
 
         stage.setScene(scene2);
         stage.sizeToScene();

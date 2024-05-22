@@ -3,7 +3,11 @@ package rpgworld;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.List;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
@@ -23,6 +27,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import rpgworld.Server.DatabaseManager;
+import rpgworld.Server.CurrentUser;
 
 public class Character {
     Pane root;
@@ -47,6 +53,9 @@ public class Character {
     private long startTime;
     private MusicManager musicManager;
 
+    private DatabaseManager dbManager;
+
+
 
     public Character(Pane root, Stage stage, Scene scene, LinkedList<ObstacleTile> barrier, ImageView dialog, Text dialogText, ImageView key, ImageView character_image, MusicManager musicManager) {
         this.barrier = barrier;
@@ -55,6 +64,8 @@ public class Character {
         this.stage = stage;
         this.musicManager = musicManager;
         startTime = System.currentTimeMillis();
+        dbManager = DatabaseManager.getInstance();
+
 
         // Initialize the Character's Walking Images Lists
         walkingUpImageList = new ArrayList<Image>();
@@ -222,6 +233,10 @@ public class Character {
             if (foundKey && x >= 137 && x <= 257 && y >= 757 && y <= 778) {
                 long timeTaken = getTimeTaken(); // Get the time taken by the user
                 timer.stop(); // Need to end animation timer or else it will keep entering this if statement and pop up the win screen infinitely
+
+                int userID = CurrentUser.userID; // Get the current user ID from a global state or session
+                dbManager.addHighScore(userID, timeTaken);
+
                 root = new Pane();
                 Scene scene = new Scene(root, 737, 800);
                 stage.setTitle("You Won!");
@@ -246,6 +261,27 @@ public class Character {
                 timeText.setLayoutX(230);
                 timeText.setLayoutY(450);
                 root.getChildren().add(timeText);
+
+                // Retrieve and display high scores
+                List<Map<String, String>> highScores = dbManager.getHighScores();
+                VBox highScoreBox = new VBox();
+                highScoreBox.setLayoutX(230);
+                highScoreBox.setLayoutY(500);
+                highScoreBox.setSpacing(5);
+
+                Label highScoreTitle = new Label("High Scores:");
+                highScoreTitle.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+                highScoreBox.getChildren().add(highScoreTitle);
+
+                for (Map<String, String> score : highScores) {
+                    String username = score.get("username");
+                    String time = score.get("time_taken");
+                    Label scoreLabel = new Label(username + ": " + time + " seconds");
+                    scoreLabel.setFont(Font.font("Verdana", FontWeight.NORMAL, 16));
+                    highScoreBox.getChildren().add(scoreLabel);
+                }
+
+                root.getChildren().add(highScoreBox);
             }
         }
         else { character_image.setImage(new Image(standingImage)); }  // if not moving, set character image to standing image

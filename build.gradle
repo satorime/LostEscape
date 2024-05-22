@@ -37,6 +37,9 @@ javafx {
 dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+  // Add JDBC driver dependency (replace 'mysql' with your database)
+  implementation 'mysql:mysql-connector-java:8.0.28'
 }
 
 test {
