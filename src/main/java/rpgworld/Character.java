@@ -42,7 +42,7 @@ public class Character {
     ArrayList<Image> walkingDownImageList;
     ArrayList<Image> walkingRightImageList;
     ArrayList<Image> walkingLeftImageList;
-    int switchWhenZero = 0;  // used to help prevent switching through each walking image too fast
+    int switchWhenZero = 0;
     int upCount;
     int downCount;
     int rightCount;
@@ -147,8 +147,7 @@ public class Character {
                 int dx = 0;
                 int dy = 0;
 
-                // switchWhenZero is used because the walking images change too fast - used a count to change image after every 4 rounds
-                if (moveUp) {  // Set speed and correct image
+                if (moveUp) {
                     dy -= 3;
                     if (switchWhenZero == 0) {
                         character_image.setImage(walkingUpImageList.get(upCount % 3));
