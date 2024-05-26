@@ -1,4 +1,4 @@
-package rpgworld.Server;
+package com.example.lostescape.Server;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

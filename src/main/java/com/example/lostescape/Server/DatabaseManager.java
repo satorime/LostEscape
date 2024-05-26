@@ -1,4 +1,4 @@
-package rpgworld.Server;
+package com.example.lostescape.Server;
 
 import java.sql.*;
 import java.util.ArrayList;

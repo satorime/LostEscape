@@ -1,59 +1,62 @@
-  plugins {
-    id 'java'
-    id 'application'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
-    id 'org.beryx.jlink' version '2.25.0'
+plugins {
+  id 'java'
+  id 'application'
+  id 'org.javamodularity.moduleplugin' version '1.8.12'
+  id 'org.openjfx.javafxplugin' version '0.0.13'
+  id 'org.beryx.jlink' version '2.25.0'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+  mavenCentral()
+}
+
+ext {
+  junitVersion = '5.10.0'
+}
+
+sourceCompatibility = '15'
+targetCompatibility = '15'
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
+application {
+  mainModule = 'com.example.lostescape'
+  mainClass = 'com.example.lostescape.HelloApplication'
+}
+
+javafx {
+  version = '17.0.6'
+  modules = ['javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.graphics']
+}
+
+dependencies {
+  implementation 'org.openjfx:javafx-controls:17.0.6'
+  implementation 'org.openjfx:javafx-fxml:17.0.6'
+  implementation 'org.openjfx:javafx-media:17.0.6'
+  implementation 'org.openjfx:javafx-graphics:17.0.6'
+  implementation 'mysql:mysql-connector-java:8.0.28'
+
+  testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+}
+
+test {
+  useJUnitPlatform()
+}
+
+jlink {
+  imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+  options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+  launcher {
+    name = 'app'
   }
+}
 
-  group 'com.example'
-  version '1.0-SNAPSHOT'
-
-  repositories {
-    mavenCentral()
-  }
-
-  ext {
-    junitVersion = '5.10.0'
-  }
-
-  sourceCompatibility = '15'
-  targetCompatibility = '15'
-
-  tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-  }
-
-  application {
-    mainModule = 'com.example.lostescape'
-    mainClass = 'com.example.lostescape.HelloApplication'
-  }
-
-  javafx {
-    version = '17.0.6'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.graphics']
-  }
-
-  dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
-
-    // Add JDBC driver dependency (replace 'mysql' with your database)
-    implementation 'mysql:mysql-connector-java:8.0.28'
-  }
-
-  test {
-    useJUnitPlatform()
-  }
-
-  jlink {
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher {
-      name = 'app'
-    }
-  }
-
-  jlinkZip {
-    group = 'distribution'
-  }
+jlinkZip {
+  group = 'distribution'
+}

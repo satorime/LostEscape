@@ -1,17 +1,16 @@
-package rpgworld;
+package com.example.lostescape;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -22,19 +21,21 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import rpgworld.Server.DatabaseManager;
-import rpgworld.Server.CurrentUser;
+import com.example.lostescape.Server.DatabaseManager;
+import com.example.lostescape.Server.CurrentUser;
+import spacewar.SpaceShooter;
 
 public class Character {
     Pane root;
     Stage stage;
     AnimationTimer timer;
-    public String standingImage = "Down2.png";;
+    public String standingImage = "Down2.png";
     public ImageView character_image;
     LinkedList<ObstacleTile> barrier;
     boolean moveUp, moveRight, moveDown, moveLeft, run;
@@ -51,11 +52,12 @@ public class Character {
     boolean nearKey = false;
 
     private long startTime;
+    private long pauseTime;
     private MusicManager musicManager;
 
     private DatabaseManager dbManager;
-
-
+    private SpaceShooter spaceShooter;
+    private boolean spaceShooterCompleted = false;
 
     public Character(Pane root, Stage stage, Scene scene, LinkedList<ObstacleTile> barrier, ImageView dialog, Text dialogText, ImageView key, ImageView character_image, MusicManager musicManager) {
         this.barrier = barrier;
@@ -66,24 +68,23 @@ public class Character {
         startTime = System.currentTimeMillis();
         dbManager = DatabaseManager.getInstance();
 
-
         // Initialize the Character's Walking Images Lists
-        walkingUpImageList = new ArrayList<Image>();
+        walkingUpImageList = new ArrayList<>();
         walkingUpImageList.add(new Image("Up1.png"));
         walkingUpImageList.add(new Image("Up2.png"));
         walkingUpImageList.add(new Image("Up3.png"));
 
-        walkingDownImageList = new ArrayList<Image>();
+        walkingDownImageList = new ArrayList<>();
         walkingDownImageList.add(new Image("Down1.png"));
         walkingDownImageList.add(new Image("Down2.png"));
         walkingDownImageList.add(new Image("Down3.png"));
 
-        walkingRightImageList = new ArrayList<Image>();
+        walkingRightImageList = new ArrayList<>();
         walkingRightImageList.add(new Image("Right1.png"));
         walkingRightImageList.add(new Image("Right2.png"));
         walkingRightImageList.add(new Image("Right3.png"));
 
-        walkingLeftImageList = new ArrayList<Image>();
+        walkingLeftImageList = new ArrayList<>();
         walkingLeftImageList.add(new Image("Left1.png"));
         walkingLeftImageList.add(new Image("Left2.png"));
         walkingLeftImageList.add(new Image("Left3.png"));
@@ -92,6 +93,8 @@ public class Character {
         downCount = 0;
         rightCount = 0;
         leftCount = 0;
+
+        this.spaceShooter = new SpaceShooter(); // Initialize the SpaceShooter game
 
         // Set EventHandler on arrow key press/release
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -104,7 +107,19 @@ public class Character {
                 else if (code == KeyCode.LEFT) { moveLeft  = true; }
                 else if (code == KeyCode.SHIFT) { run = true; }
                 else if (code == KeyCode.SPACE) {  // Space pressed - check for key and pop up dialog message
-                    if (nearKey) {
+                    if (nearLivingRoomTable()) {
+                        if (spaceShooterCompleted) {
+                            dialogText.setText("Didn't find key.");
+                            dialogText.setOpacity(1);
+                            dialog.setOpacity(1);
+
+                            PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+                            pause.setOnFinished(ev -> { dialogText.setOpacity(0); dialog.setOpacity(0); });
+                            pause.play();
+                        } else {
+                            startSpaceShooterGame();
+                        }
+                    } else if (nearKey) {
                         foundKey = true;
                         dialogText.setText("Got Key!");
                         dialogText.setOpacity(1);
@@ -115,8 +130,7 @@ public class Character {
                         pause.setOnFinished(ev -> { dialogText.setOpacity(0); dialog.setOpacity(0); });
                         pause.play();
 
-                    }
-                    else {
+                    } else {
                         dialogText.setText("Didn't find key.");
                         dialogText.setOpacity(1);
                         dialog.setOpacity(1);
@@ -153,41 +167,34 @@ public class Character {
                         character_image.setImage(walkingUpImageList.get(upCount % 3));
                         upCount++;
                         switchWhenZero = 4;
-                    }
-                    else {
+                    } else {
                         switchWhenZero--;
                     }
-                }
-                else if (moveDown) {
+                } else if (moveDown) {
                     dy += 3;
                     if (switchWhenZero == 0) {
                         character_image.setImage(walkingDownImageList.get(downCount % 3));
                         downCount++;
                         switchWhenZero = 4;
-                    }
-                    else {
+                    } else {
                         switchWhenZero--;
                     }
-                }
-                else if (moveRight) {
+                } else if (moveRight) {
                     dx += 3;
                     if (switchWhenZero == 0) {
                         character_image.setImage(walkingRightImageList.get(rightCount % 3));
                         rightCount++;
                         switchWhenZero = 4;
-                    }
-                    else {
+                    } else {
                         switchWhenZero--;
                     }
-                }
-                else if (moveLeft) {
+                } else if (moveLeft) {
                     dx -= 3;
                     if (switchWhenZero == 0) {
                         character_image.setImage(walkingLeftImageList.get(leftCount % 3));
                         leftCount++;
                         switchWhenZero = 4;
-                    }
-                    else {
+                    } else {
                         switchWhenZero--;
                     }
                 }
@@ -203,29 +210,31 @@ public class Character {
     }
 
     public long getTimeTaken() {
-        return (System.currentTimeMillis() - startTime) / 1000; // Return the time taken in seconds
+        return (System.currentTimeMillis() - startTime - pauseTime) / 1000; // Return the time taken in seconds
     }
 
     // Move character in the correct direction and also check for key/exit
     private void moveCharacter(int dx, int dy) {
         if (dx != 0 || dy != 0) {  // Only move if character has "speed" - added/subtracted from the key presses
-            double cx = character_image.getBoundsInLocal().getWidth()  / 2;
+            double cx = character_image.getBoundsInLocal().getWidth() / 2;
             double cy = character_image.getBoundsInLocal().getHeight() / 2;
 
             double x = cx + character_image.getLayoutX() + dx;
             double y = cy + character_image.getLayoutY() + dy;
 
             // Check if character should move
-            if ( x - cx >= 0 &&
+            if (x - cx >= 0 &&
                     x + cx <= 737 &&  // Scene width
                     y - cy >= 0 &&
                     y + cy <= 800 && // Scene height
-                    !hitBarrier(x - cx, y - cy) ) {
+                    !hitBarrier(x - cx, y - cy)) {
                 character_image.relocate(x - cx, y - cy);
             }
 
             // Check if character is near the key
-            if (x >= 587 && x <= 590 && y >= 130 && y <= 145) { nearKey = true; }
+            if (x >= 587 && x <= 590 && y >= 130 && y <= 145) {
+                nearKey = true;
+            }
 
             // Check if character found key and is near the door
             // Won the game!
@@ -282,9 +291,9 @@ public class Character {
 
                 root.getChildren().add(highScoreBox);
             }
-        }
-        else { character_image.setImage(new Image(standingImage)); }  // if not moving, set character image to standing image
-
+        } else {
+            character_image.setImage(new Image(standingImage));
+        }  // if not moving, set character image to standing image
     }
 
     // Returns true if character hit a wall/object
@@ -310,5 +319,65 @@ public class Character {
             }
         }
         return false;
+    }
+
+    private boolean nearLivingRoomTable() {
+        double tableMinX = 150; // Adjusted slightly for more accurate detection
+        double tableMaxX = 250;
+        double tableMinY = 490;
+        double tableMaxY = 610;
+
+        double cx = character_image.getBoundsInLocal().getWidth() / 2;
+        double cy = character_image.getBoundsInLocal().getHeight() / 2;
+        double x = cx + character_image.getLayoutX();
+        double y = cy + character_image.getLayoutY();
+
+        System.out.println("Character X: " + x + ", Y: " + y);
+        System.out.println("Table X range: " + tableMinX + " - " + tableMaxX + ", Y range: " + tableMinY + " - " + tableMaxY);
+
+        return (x >= tableMinX && x <= tableMaxX && y >= tableMinY && y <= tableMaxY);
+    }
+
+    private void startSpaceShooterGame() {
+        root.getChildren().remove(character_image); // Remove character image from the root
+
+        // Save current character state
+        double characterX = character_image.getLayoutX();
+        double characterY = character_image.getLayoutY();
+        boolean wasMovingUp = moveUp;
+        boolean wasMovingDown = moveDown;
+        boolean wasMovingLeft = moveLeft;
+        boolean wasMovingRight = moveRight;
+
+        // Pause the timer
+//        pauseTime += System.currentTimeMillis() - startTime;
+//        timer.stop();
+
+        Stage spaceShooterStage = new Stage();
+        try {
+            spaceShooter.start(spaceShooterStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        spaceShooterStage.setOnCloseRequest(event -> {
+            // Restore the original game UI
+            root.getChildren().add(character_image);
+
+            // Restore character state
+            character_image.relocate(characterX, characterY);
+            moveUp = wasMovingUp;
+            moveDown = wasMovingDown;
+            moveLeft = wasMovingLeft;
+            moveRight = wasMovingRight;
+
+            // Resume the timer
+//            startTime = System.currentTimeMillis();
+//            timer.start();
+
+            stage.show(); // Show the original stage
+
+            spaceShooterCompleted = true;
+        });
     }
 }

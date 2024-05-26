@@ -1,4 +1,4 @@
-package rpgworld;
+package com.example.lostescape;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;

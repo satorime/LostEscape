@@ -1,4 +1,4 @@
-package rpgworld.Server;
+package com.example.lostescape.Server;
 
 public enum Status {
     LOGIN_SUCCESS, USERNAME_NOT_FOUND, INCORRECT_PASSWORD, ACCOUNT_CREATED_SUCCESSFULLY, ACCOUNT_CREATION_FAILED,

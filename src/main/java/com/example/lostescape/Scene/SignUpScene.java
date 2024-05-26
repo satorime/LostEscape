@@ -1,4 +1,4 @@
-package rpgworld.Scene;
+package com.example.lostescape.Scene;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -11,8 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import rpgworld.Server.DatabaseManager;
-import rpgworld.Server.Status;
+import com.example.lostescape.Server.DatabaseManager;
+import com.example.lostescape.Server.Status;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package rpgworld.Scene;
+package com.example.lostescape.Scene;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,24 +14,21 @@ public class SplashScreen {
     public void start(Stage primaryStage) {
         Stage splashStage = new Stage(StageStyle.TRANSPARENT);
 
-        ImageView splashImage = new ImageView(new Image("Down2.png"));
-        splashImage.setPreserveRatio(true);
-        splashImage.setFitWidth(400);
+        // Load image from resources
+        Image splashImage = new Image(getClass().getResource("/Down2.png").toExternalForm());
+        ImageView splashImageView = new ImageView(splashImage);
+        splashImageView.setPreserveRatio(true);
+        splashImageView.setFitWidth(400);
 
-        StackPane root = new StackPane(splashImage);
+        StackPane root = new StackPane(splashImageView);
         Scene scene = new Scene(root, 400, 400);
         scene.setFill(null);
 
         splashStage.setScene(scene);
         splashStage.show();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
-            splashStage.close();
-
-            LoginScene loginScene = new LoginScene();
-            primaryStage.setScene(loginScene.getLoginScene(primaryStage));
-            primaryStage.show();
-        }));
+        // Close splash screen after a duration
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> splashStage.close()));
         timeline.setCycleCount(1);
         timeline.play();
     }

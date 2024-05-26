@@ -1,9 +1,10 @@
-package rpgworld;
+package com.example.lostescape;
 
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.example.lostescape.Scene.LoginScene;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,23 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import rpgworld.Scene.LoginScene;
-import rpgworld.Server.DatabaseManager;
-
-import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class World extends Application {
 
@@ -42,15 +32,9 @@ public class World extends Application {
     Stage mainStage;
     private MusicManager musicManager = new MusicManager(); // Initialize musicManager here
 
-
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     @Override
     public void start(Stage stage) {
-        // First show game starting screen
+        // First show login screen
         musicManager = new MusicManager();
         mainStage = stage;
 
@@ -58,7 +42,8 @@ public class World extends Application {
         stage.setTitle("Login");
         stage.show();
     }
-    public void startGame(Stage stage){
+
+    public void startGame(Stage stage) {
         root = new Pane();
         Scene scene = new Scene(root, 1000, 562);
         stage.setTitle("Starting Menu");
@@ -72,7 +57,6 @@ public class World extends Application {
         BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
         Background background = new Background(new BackgroundImage(startBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
         root.setBackground(background);
-
 
         // Dialog Text box - Shows when help button is clicked
         ImageView dialog = new ImageView(new Image("button_image.png"));
@@ -125,7 +109,6 @@ public class World extends Application {
 
         timerDisplay.setLayoutX(root.getWidth() - 100);
         timerDisplay.setLayoutY(50);
-
 
         timer = new Timer();
         TimerTask timerTask = new TimerTask() {
