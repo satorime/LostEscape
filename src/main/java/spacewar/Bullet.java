@@ -10,7 +10,7 @@ public class Bullet extends GameObject {
     private static final double SPEED = 7;
 
     public Bullet(double x, double y) {
-        super(x, y, WIDTH, HEIGHT); // Pass the WIDTH and HEIGHT constants
+        super(x, y, WIDTH, HEIGHT);
     }
 
     @Override

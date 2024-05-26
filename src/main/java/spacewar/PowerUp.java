@@ -45,4 +45,5 @@ public class PowerUp extends GameObject {
     public void setDead(boolean b) {
         this.isDead = b;
     }
+    //
 }

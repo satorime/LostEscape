@@ -34,7 +34,7 @@ public class EnemyBullet extends GameObject {
         return HEIGHT;
     }
 
-    private boolean dead = false;
+    private boolean dead = false; //false
 
     public void setDead(boolean dead) {
         this.dead = dead;

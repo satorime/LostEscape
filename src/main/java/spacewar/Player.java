@@ -17,7 +17,6 @@ public class Player extends GameObject {
     private boolean moveBackward;
     private int health = 20;
 
-    // In Player class
     @Override
     public double getWidth() {
         return WIDTH;

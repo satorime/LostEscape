@@ -9,7 +9,7 @@ public class Enemy extends GameObject {
     protected static final int WIDTH = 30;
     protected static final int HEIGHT = 30;
     public static double SPEED = 2;
-
+    //enemy
     public Enemy(double x, double y) {
         super(x, y, WIDTH, HEIGHT);
     }

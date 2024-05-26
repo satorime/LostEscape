@@ -36,7 +36,7 @@ public abstract class GameObject {
     public Bounds getBounds() {
         return new Rectangle(x - getWidth() / 2, y - getHeight() / 2, getWidth(), getHeight()).getBoundsInLocal();
     }
-
+ //try
     public abstract double getWidth();
 
     public abstract double getHeight();

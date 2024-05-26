@@ -26,7 +26,6 @@ public class BossEnemy extends Enemy {
 
     @Override
     public void update() {
-        // BossEnemy stays at the top of the screen
         if (y < 40) {
             y += SPEED;
         }

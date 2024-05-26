@@ -85,6 +85,7 @@ public class SpaceShooter extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gameObjects.add(player);
         initEventHandlers(scene);
+        //
 
         AnimationTimer gameLoop = new AnimationTimer() {
             private long lastEnemySpawned = 0;
