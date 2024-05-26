@@ -1,50 +1,148 @@
 package com.example.lostescape.Scene;
 
 import com.example.lostescape.World;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import com.example.lostescape.Server.DatabaseManager;
 import com.example.lostescape.Server.Status;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class LoginScene {
-    private List<ImageView> imageViews = new ArrayList<>();
-    private int currentIndex = 0;
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     public Scene getLoginScene(Stage stage) {
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(20));
-        vbox.setAlignment(Pos.CENTER_LEFT);
-        VBox.setVgrow(vbox, Priority.ALWAYS);
+        // insets
+        Insets header = new Insets(-10, 0, -13, 0);
+        Insets loginheader1 = new Insets(13, 0, 0, 0);
+        Insets loginheader2 = new Insets(5, 0, 0, 0);
+        Insets register = new Insets(-2, 0, -15, 0);
 
-        Label usernameLabel = new Label("Username:");
+        AnchorPane root = new AnchorPane();
+        root.getStyleClass().add("root");
+
+        HBox hBox = new HBox();
+        hBox.getStyleClass().add("hbox");
+
+        VBox vBoxLeft = new VBox();
+        vBoxLeft.setPrefWidth(300);
+        vBoxLeft.getStyleClass().add("vboxleft");
+
+        Label welcomeLabel = new Label("Welcome");
+        welcomeLabel.setPadding(header);
+        welcomeLabel.getStyleClass().add("welcome");
+
+        Label groupLabel = new Label(" to cabin quest, the new escapade");
+        groupLabel.setMaxWidth(Double.MAX_VALUE);
+        groupLabel.setAlignment(Pos.CENTER);
+        groupLabel.getStyleClass().add("group");
+
+        VBox.setMargin(groupLabel, new Insets(0, 0, 10, 0));
+
+        Label usernameLabel = new Label("     Username");
+        usernameLabel.setPadding(loginheader1);
+        usernameLabel.setMaxWidth(Double.MAX_VALUE);
+        usernameLabel.setAlignment(Pos.BOTTOM_LEFT);
+        usernameLabel.getStyleClass().add("login-indicator");
+
         TextField usernameField = new TextField();
         usernameField.setPromptText("Enter your username");
-        usernameField.getStyleClass().add("text-field");
+        usernameField.getStyleClass().add("login-field");
 
-        Label passwordLabel = new Label("Password:");
+        Label passwordLabel = new Label("     Password");
+        passwordLabel.setPadding(loginheader2);
+        passwordLabel.setMaxWidth(Double.MAX_VALUE);
+        passwordLabel.setAlignment(Pos.BOTTOM_LEFT);
+        passwordLabel.getStyleClass().add("login-indicator");
+
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Enter your password");
-        passwordField.getStyleClass().add("password-field");
+        passwordField.getStyleClass().add("login-field");
 
-        CheckBox staySignedIn = new CheckBox("Stay signed in");
+        VBox.setMargin(passwordField, new Insets(0, 0, 10, 0));
 
         Button loginButton = new Button("Login");
+        loginButton.setPadding(header);
         loginButton.setMaxWidth(Double.MAX_VALUE);
+        loginButton.setAlignment(Pos.CENTER);
+        loginButton.getStyleClass().add("login-btn");
 
-        Button signUpButton = new Button("Create account");
-        signUpButton.setMaxWidth(Double.MAX_VALUE);
+        VBox.setMargin(loginButton, new Insets(15, 0, 0, 0));
+
+        Label accountLabel = new Label("Don't have an account?");
+        accountLabel.setPadding(loginheader1);
+        accountLabel.getStyleClass().add("noacc-indicator");
+
+        Button signUpButton = new Button("Register Now");
+        signUpButton.setPadding(register);
+        signUpButton.getStyleClass().add("register-btn");
+
+        VBox.setMargin(signUpButton, new Insets(0, 0, 10, 0));
+
+        vBoxLeft.getChildren().addAll(welcomeLabel, groupLabel, usernameLabel, usernameField, passwordLabel, passwordField, loginButton, accountLabel, signUpButton);
+
+        VBox vBoxRight = new VBox();
+        vBoxRight.getStyleClass().add("vboxright");
+
+        Rectangle imageView = new Rectangle(0, 0, 300, 320);
+        imageView.setArcWidth(40.0);
+        imageView.setArcHeight(40.0);
+
+        ImagePattern pattern = new ImagePattern(
+                new Image("login-img.jpg", 300, 320, false, false)
+        );
+        imageView.setFill(pattern);
+        imageView.setEffect(new DropShadow(30, Color.BROWN));
+
+        Button exitButton = new Button("x");
+        exitButton.getStyleClass().add("exit-btn");
+        exitButton.setOnAction(event -> stage.close());
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(imageView, exitButton);
+
+        StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(exitButton, new Insets(15));
+
+        vBoxRight.getChildren().addAll(stackPane);
+
+        Separator separator = new Separator();
+        separator.setOrientation(javafx.geometry.Orientation.HORIZONTAL);
+        separator.setPrefWidth(30);
+        separator.setOpacity(0);
+
+        hBox.getChildren().addAll(vBoxLeft, separator, vBoxRight);
+        root.getChildren().add(hBox);
+
+        root.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        });
+
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        scene.getStylesheets().add("css-files/login-css.css");
+
+        //stage.initStyle(StageStyle.TRANSPARENT); // Move this line here
+        stage.setTitle("Login");
+        stage.setScene(scene);
+        stage.show();
+        centerStage(stage);
 
         loginButton.setOnAction(event -> {
             String username = usernameField.getText();
@@ -63,52 +161,16 @@ public class LoginScene {
 
         signUpButton.setOnAction(event -> {
             SignUpScene signUpScene = new SignUpScene();
+            //stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(signUpScene.getSignUpScene(stage));
         });
 
-        vbox.getChildren().addAll(usernameLabel, usernameField, passwordLabel, passwordField, staySignedIn, loginButton, signUpButton);
-
-        StackPane formPane = new StackPane(vbox);
-        StackPane.setAlignment(vbox, Pos.CENTER_LEFT);
-        StackPane.setMargin(vbox, new Insets(10));
-
-        String[] imagePaths = {
-                "jeastel.jpg",
-                "jake.jpg",
-                "hanz.jpg",
-                "brix.jpg"
-        };
-
-        for (String imagePath : imagePaths) {
-            ImageView imageView = new ImageView(new Image(imagePath));
-            imageView.setPreserveRatio(true);
-            imageView.fitWidthProperty().bind(formPane.widthProperty().multiply(0.5));
-            imageView.fitHeightProperty().bind(formPane.heightProperty());
-            imageView.setVisible(false);
-            imageViews.add(imageView);
-        }
-
-        imageViews.get(0).setVisible(true);
-
-        StackPane imagePane = new StackPane();
-        imagePane.setAlignment(Pos.CENTER_RIGHT);
-        imagePane.getChildren().addAll(imageViews);
-
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), event -> {
-            imageViews.get(currentIndex).setVisible(false);
-            currentIndex = (currentIndex + 1) % imageViews.size();
-            imageViews.get(currentIndex).setVisible(true);
-        }));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setRight(imagePane);
-        borderPane.setCenter(formPane);
-
-        Scene scene = new Scene(borderPane, 800, 600);
-        scene.getStylesheets().add("styles.css");
-
         return scene;
+    }
+
+    private void centerStage(Stage stage) {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
+        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
     }
 }
