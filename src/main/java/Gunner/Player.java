@@ -1,8 +1,8 @@
-package spacewar;
+package Gunner;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.image.Image;
+
 import java.util.List;
 
 
@@ -10,12 +10,14 @@ public class Player extends GameObject {
 
     private static final int WIDTH = 20;
     private static final int HEIGHT = 20;
-    private static final double SPEED = 5;
+    private static final double SPEED = 3;
     private boolean moveLeft;
     private boolean moveRight;
     private boolean moveForward;
     private boolean moveBackward;
     private int health = 20;
+    private Image playerImage;
+
 
     @Override
     public double getWidth() {
@@ -29,6 +31,7 @@ public class Player extends GameObject {
 
     public Player(double x, double y) {
         super(x, y, 30, 30);
+        playerImage = new Image("Up2.png");
     }
 
     public int getHealth() {
@@ -61,9 +64,9 @@ public class Player extends GameObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.setFill(Color.BLUE);
-        gc.fillRect(x - WIDTH / 2, y - HEIGHT / 2, WIDTH, HEIGHT);
+        gc.drawImage(playerImage, x - (WIDTH / 2), y - (HEIGHT / 2), WIDTH * 1.5, HEIGHT * 1.5);
     }
+
 
 
     public void setMoveLeft(boolean moveLeft) {

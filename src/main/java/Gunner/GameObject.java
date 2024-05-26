@@ -1,4 +1,4 @@
-package spacewar;
+package Gunner;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.geometry.Bounds;

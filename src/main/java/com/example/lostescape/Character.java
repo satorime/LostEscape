@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import com.example.lostescape.Server.DatabaseManager;
 import com.example.lostescape.Server.CurrentUser;
-import spacewar.SpaceShooter;
+import Gunner.SpaceShooter;
 
 public class Character {
     Pane root;
@@ -349,9 +349,6 @@ public class Character {
         boolean wasMovingLeft = moveLeft;
         boolean wasMovingRight = moveRight;
 
-        // Pause the timer
-//        pauseTime += System.currentTimeMillis() - startTime;
-//        timer.stop();
 
         Stage spaceShooterStage = new Stage();
         try {
@@ -360,7 +357,7 @@ public class Character {
             e.printStackTrace();
         }
 
-        spaceShooterStage.setOnCloseRequest(event -> {
+        spaceShooterStage.setOnHiding(event -> {
             // Restore the original game UI
             root.getChildren().add(character_image);
 
@@ -371,9 +368,6 @@ public class Character {
             moveLeft = wasMovingLeft;
             moveRight = wasMovingRight;
 
-            // Resume the timer
-//            startTime = System.currentTimeMillis();
-//            timer.start();
 
             stage.show(); // Show the original stage
 
