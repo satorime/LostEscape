@@ -22,7 +22,6 @@ public class LoginScene {
     private double yOffset = 0;
 
     public Scene getLoginScene(Stage stage) {
-        // insets
         Insets header = new Insets(-10, 0, -13, 0);
         Insets loginheader1 = new Insets(13, 0, 0, 0);
         Insets loginheader2 = new Insets(5, 0, 0, 0);
@@ -138,7 +137,7 @@ public class LoginScene {
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add("css-files/login-css.css");
 
-        //stage.initStyle(StageStyle.TRANSPARENT); // Move this line here
+        //stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Login");
         stage.setScene(scene);
         stage.show();
