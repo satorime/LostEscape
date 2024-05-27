@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -18,6 +19,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class World extends Application {
@@ -43,11 +45,18 @@ public class World extends Application {
         stage.show();
     }
 
+    private void centerStage(Stage stage) {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
+        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+    }
+
     public void startGame(Stage stage) {
         root = new Pane();
-        Scene scene = new Scene(root, 1000, 562);
+        Scene scene = new Scene(root, 850, 405);
         stage.setTitle("Starting Menu");
         stage.setScene(scene);
+        centerStage(stage);
         stage.show();
 
         new Thread(() -> musicManager.playBackgroundMusic("background.mp3")).start();
@@ -89,13 +98,15 @@ public class World extends Application {
 
     public void createButton(String n, int pos, EventHandler<ActionEvent> e) {
         Button btn = new Button(n);
-        btn.setTranslateX(200 + pos * 200);
+        btn.setTranslateX(145 + pos * 200);
         btn.setTranslateY(250);
-        btn.setPrefSize(200, 200);
-        btn.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        btn.setPrefSize(150, 150);
+        btn.setStyle("-fx-font-family: 'Verdana'; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
+
         Image image = new Image("/button_image.png", btn.getWidth(), btn.getHeight(), false, true, true);
         BackgroundImage bImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(btn.getWidth(), btn.getHeight(), true, true, true, false));
         Background backGround = new Background(bImage);
+
         btn.setBackground(backGround);
         btn.setOnAction(e);
         root.getChildren().add(btn);
@@ -140,13 +151,7 @@ public class World extends Application {
 
         stage.setScene(scene2);
         stage.sizeToScene();
-
-        double screenWidth = javafx.stage.Screen.getPrimary().getBounds().getWidth();
-        double screenHeight = javafx.stage.Screen.getPrimary().getBounds().getHeight();
-
-        stage.setX((screenWidth - scene2.getWidth()) / 2);
-        stage.setY((screenHeight - scene2.getHeight()) / 2);
-
+        centerStage(stage);
         stage.show();
 
         Image houseBackgroundImage = new Image("game-background.jpg");
