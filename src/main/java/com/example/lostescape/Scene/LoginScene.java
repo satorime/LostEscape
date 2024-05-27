@@ -103,17 +103,7 @@ public class LoginScene {
         imageView.setFill(pattern);
         imageView.setEffect(new DropShadow(30, Color.BROWN));
 
-        Button exitButton = new Button("x");
-        exitButton.getStyleClass().add("exit-btn");
-        exitButton.setOnAction(event -> stage.close());
-
-        StackPane stackPane = new StackPane();
-        stackPane.getChildren().addAll(imageView, exitButton);
-
-        StackPane.setAlignment(exitButton, Pos.TOP_RIGHT);
-        StackPane.setMargin(exitButton, new Insets(15));
-
-        vBoxRight.getChildren().addAll(stackPane);
+        vBoxRight.getChildren().addAll(imageView);
 
         Separator separator = new Separator();
         separator.setOrientation(javafx.geometry.Orientation.HORIZONTAL);
@@ -161,7 +151,6 @@ public class LoginScene {
 
         signUpButton.setOnAction(event -> {
             SignUpScene signUpScene = new SignUpScene();
-            //stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(signUpScene.getSignUpScene(stage));
         });
 
