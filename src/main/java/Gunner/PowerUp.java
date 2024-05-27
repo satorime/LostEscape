@@ -1,6 +1,7 @@
-package spacewar;
+package Gunner;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 public class PowerUp extends GameObject {
@@ -11,9 +12,11 @@ public class PowerUp extends GameObject {
     private static final double SPEED = 2;
 
     private boolean isDead = false;
+    private Image powerup;
 
     public PowerUp(double x, double y) {
-        super(x, y, WIDTH, HEIGHT);
+        super(x, y, 30, 30);
+        powerup = new Image("powerup.png");
     }
 
     @Override
@@ -23,8 +26,7 @@ public class PowerUp extends GameObject {
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.setFill(Color.GREEN);
-        gc.fillRect(x - WIDTH / 2, y - HEIGHT / 2, WIDTH, HEIGHT);
+        gc.drawImage(powerup, x - (WIDTH / 2), y - (HEIGHT / 2), WIDTH * 1.5, HEIGHT * 1.5);
     }
 
     @Override

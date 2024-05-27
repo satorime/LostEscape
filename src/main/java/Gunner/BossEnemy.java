@@ -1,13 +1,14 @@
-package spacewar;
+package Gunner;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.List;
 
 public class BossEnemy extends Enemy {
 
-    private int health = 5;
+    private int health = 3;
 
     private int WIDTH;
 
@@ -15,12 +16,15 @@ public class BossEnemy extends Enemy {
 
     private int numHits = 5;
 
+    private Image boss;
+
     public BossEnemy(double x, double y) {
         super(x, y);
         SPEED = 1.0;
         WIDTH = 50;
         HEIGHT = 50;
-        health = 5;
+
+        boss = new Image("boss.png");
     }
 
 
@@ -44,18 +48,13 @@ public class BossEnemy extends Enemy {
         }
     }
 
-    public void decreaseHealth() {
-        health--;
-    }
-
     public boolean isDead() {
         return health <= 0;
     }
 
     @Override
     public void render(GraphicsContext gc) {
-        gc.setFill(Color.BLUE);
-        gc.fillRect(x - WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
+        gc.drawImage(boss, x - WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
     }
 
     public void hit() {

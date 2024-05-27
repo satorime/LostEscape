@@ -215,7 +215,7 @@ public class World extends Application {
     }
 
     public void createObstacleTile(double w, double h, double x, double y) {
-        ObstacleTile tile = new ObstacleTile(w, h, x, y); // rectangle width, height, x_coord, y_coord
+        ObstacleTile tile = new ObstacleTile(w, h, x, y);
         root.getChildren().add(tile);
         barrier.add(tile);
     }
