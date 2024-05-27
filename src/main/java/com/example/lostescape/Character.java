@@ -109,7 +109,7 @@ public class Character {
                 else if (code == KeyCode.SPACE) {  // Space pressed - check for key and pop up dialog message
                     if (nearLivingRoomTable()) {
                         if (spaceShooterCompleted) {
-                            dialogText.setText("Didn't find key.");
+                            dialogText.setText("Clue: A place u can make 'something'~");
                             dialogText.setOpacity(1);
                             dialog.setOpacity(1);
 

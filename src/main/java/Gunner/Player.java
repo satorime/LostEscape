@@ -17,6 +17,8 @@ public class Player extends GameObject {
     private boolean moveBackward;
     private int health = 20;
     private Image playerImage;
+    private int hitCount = 0;
+    private static final int MAX_HITS = 2;
 
 
     @Override
@@ -99,6 +101,21 @@ public class Player extends GameObject {
     @Override
     public boolean isDead() {
         return dead;
+    }
+
+    public void takeDamage(){
+        hitCount++;
+        if(hitCount >= MAX_HITS){
+            setDead(true);
+        }
+    }
+
+    public int getHitCount(){
+        return hitCount;
+    }
+    public void revive() {
+        health = 3;
+        setDead(false);
     }
 
 }

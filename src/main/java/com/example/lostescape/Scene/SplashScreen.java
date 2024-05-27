@@ -10,12 +10,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+import java.util.Objects;
+
 public class SplashScreen {
     public void start(Stage primaryStage) {
         Stage splashStage = new Stage(StageStyle.TRANSPARENT);
 
         // Load image from resources
-        Image splashImage = new Image(getClass().getResource("/Down2.png").toExternalForm());
+        Image splashImage = new Image(Objects.requireNonNull(getClass().getResource("/boss.png")).toExternalForm());
         ImageView splashImageView = new ImageView(splashImage);
         splashImageView.setPreserveRatio(true);
         splashImageView.setFitWidth(400);

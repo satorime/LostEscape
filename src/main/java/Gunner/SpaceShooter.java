@@ -3,6 +3,7 @@ package Gunner;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
-import static javafx.stage.StageStyle.DECORATED;
 
 public class SpaceShooter extends Application {
 
@@ -163,10 +162,10 @@ public class SpaceShooter extends Application {
             }
         }
 
-        if (!bossExists && score % 200 == 0 && score > 0) {
+        if (!bossExists && score % 100 == 0 && score > 0) {
             BossEnemy boss = new BossEnemy(x, -50);
             gameObjects.add(boss);
-            showTempMessage("A boss is ahead, watch out!", 75, HEIGHT / 2 - 100, 5);
+            showTempMessage("How's your day, everyone?!", WIDTH / 3 - 30, HEIGHT / 2 - 100, 5);
         } else {
             Enemy enemy = new Enemy(x, -40);
             gameObjects.add(enemy);
@@ -177,12 +176,15 @@ public class SpaceShooter extends Application {
         List<Bullet> bullets = new ArrayList<>();
         List<Enemy> enemies = new ArrayList<>();
         List<PowerUp> powerUps = new ArrayList<>();
+        List<EnemyBullet> enemyBullets = new ArrayList<>();
 
         for (GameObject obj : gameObjects) {
             if (obj instanceof Bullet) {
                 bullets.add((Bullet) obj);
             } else if (obj instanceof Enemy) {
                 enemies.add((Enemy) obj);
+            }else if (obj instanceof EnemyBullet) {
+                enemyBullets.add((EnemyBullet) obj);
             } else if (obj instanceof PowerUp) {
                 powerUps.add((PowerUp) obj);
             }
@@ -211,9 +213,16 @@ public class SpaceShooter extends Application {
                 if (bullet.getBounds().intersects(powerUp.getBounds())) {
                     bullet.setDead(true);
                     powerUp.setDead(true);
-                    score += 50;
+                    score += 30;
                     scoreLabel.setText("Score: " + score);
                 }
+            }
+        }
+
+
+        for (EnemyBullet bullet : enemyBullets) {
+            if (bullet.getBounds().intersects(player.getBounds())) {
+                handlePlayerDamage();
             }
         }
 
@@ -225,6 +234,14 @@ public class SpaceShooter extends Application {
         }
 
         checkScore();
+    }
+
+    private void handlePlayerDamage() {
+        new Thread(() -> {
+            Platform.runLater(() -> {
+                showTempMessage("Agoi, hagbongonon", WIDTH / 3 - 30, HEIGHT / 2, 1.5);
+            });
+        }).start();
     }
 
     private void checkEnemiesReachingBottom() {
@@ -258,7 +275,7 @@ public class SpaceShooter extends Application {
         scoreLabel.setText("Score: " + score);
         gameObjects.add(player);
         reset = true;
-        Text lostMessage = new Text("You lost! The game has been reset.");
+        Text lostMessage = new Text("You lost! Skill Issue~~");
         lostMessage.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         lostMessage.setFill(Color.RED);
         lostMessage.setX((WIDTH - lostMessage.getLayoutBounds().getWidth()) / 2);
