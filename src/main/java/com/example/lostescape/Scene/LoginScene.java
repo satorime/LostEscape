@@ -137,6 +137,7 @@ public class LoginScene {
         scene.setFill(Color.TRANSPARENT);
         scene.getStylesheets().add("css-files/login-css.css");
 
+        //para invisible
         //stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Login");
         stage.setScene(scene);
