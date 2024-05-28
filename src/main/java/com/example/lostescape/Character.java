@@ -339,6 +339,26 @@ public class Character implements OtherGameElements{
         BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
         Background background = new Background(new BackgroundImage(leaderboardbg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
         root.setBackground(background);
+
+        List<Map<String, String>> highScores = dbManager.getHighScores();
+        VBox highScoreBox = new VBox();
+        double highScoreBoxX = (scene2.getWidth() - highScoreBox.getBoundsInLocal().getWidth()) / 2;
+        double highScoreBoxY = (scene2.getHeight() - highScoreBox.getBoundsInLocal().getHeight()) / 2;
+
+        highScoreBox.setLayoutX(highScoreBoxX);
+        highScoreBox.setLayoutY(highScoreBoxY);
+        highScoreBox.setSpacing(5);
+        Label highScoreTitle = new Label("High Scores:");
+        highScoreTitle.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        highScoreBox.getChildren().add(highScoreTitle);
+        for (Map<String, String> score : highScores) {
+            String username = score.get("username");
+            String time = score.get("time_taken");
+            Label scoreLabel = new Label(username + ": " + time + " seconds");
+            scoreLabel.setFont(Font.font("Verdana", FontWeight.NORMAL, 16));
+            highScoreBox.getChildren().add(scoreLabel);
+        }
+        root.getChildren().add(highScoreBox);
     }
 
     // Returns true if character hit a wall/object
