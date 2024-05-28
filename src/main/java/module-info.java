@@ -8,4 +8,5 @@ module com.example.lostescape {
     opens com.example.lostescape to javafx.fxml;
     exports com.example.lostescape to javafx.graphics;
     exports Gunner to javafx.graphics;
+    exports FlappyRato to javafx.graphics;
 }

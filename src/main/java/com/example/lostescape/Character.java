@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import FlappyRato.FlappyBird;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -63,7 +64,9 @@ public class Character implements OtherGameElements{
 
     private DatabaseManager dbManager;
     private SpaceShooter spaceShooter;
+    private FlappyBird flappyBird;
     private boolean spaceShooterCompleted = false;
+    private boolean flappyBirdComplete = false;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -104,6 +107,7 @@ public class Character implements OtherGameElements{
         leftCount = 0;
 
         this.spaceShooter = new SpaceShooter(); // Initialize the SpaceShooter game
+        this.flappyBird = new FlappyBird(); // Initialize the FlappyBird game
 
         // Set EventHandler on arrow key press/release
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -128,7 +132,19 @@ public class Character implements OtherGameElements{
                         } else {
                             startSpaceShooterGame();
                         }
-                    } else if (nearKey) {
+                    }else if(nearLaptopTable()){
+                        if(flappyBirdComplete){
+                            dialogText.setText("Clue: A place u can make 'something'~");
+                            dialogText.setOpacity(1);
+                            dialog.setOpacity(1);
+
+                            PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+                            pause.setOnFinished(ev -> { dialogText.setOpacity(0); dialog.setOpacity(0); });
+                            pause.play();
+                        }else{
+                            startFlappyBird();
+                        }
+                    }else if (nearKey) {
                         foundKey = true;
                         dialogText.setText("Got Key!");
                         dialogText.setOpacity(1);
@@ -361,6 +377,56 @@ public class Character implements OtherGameElements{
         root.getChildren().add(highScoreBox);
     }
 
+//    public void loadLeaderboard(Stage stage) {
+//        musicManager.changeBackgroundMusic("game-background.mp3");
+//
+//        root = new Pane();
+//        Scene scene2 = new Scene(root, 900, 887);
+//        stage.setTitle("Leaderboard");
+//
+//        stage.setScene(scene2);
+//        stage.sizeToScene();
+//        centerStage(stage);
+//        stage.show();
+//        setupMouseEvents(root, stage);
+//
+//        Image leaderboardbg = new Image("leaderboard.jpg");
+//        BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
+//        Background background = new Background(new BackgroundImage(leaderboardbg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
+//        root.setBackground(background);
+//
+//        List<Map<String, String>> highScores = dbManager.getHighScores();
+//        VBox highScoreBox = new VBox();
+//        double highScoreBoxX = (scene2.getWidth() - highScoreBox.getBoundsInLocal().getWidth()) / 2;
+//        double highScoreBoxY = (scene2.getHeight() - highScoreBox.getBoundsInLocal().getHeight()) / 2;
+//
+//        highScoreBox.setLayoutX(highScoreBoxX);
+//        highScoreBox.setLayoutY(highScoreBoxY);
+//        highScoreBox.setSpacing(5);
+//        Label highScoreTitle = new Label("High Scores:");
+//        highScoreTitle.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+//        highScoreBox.getChildren().add(highScoreTitle);
+//        for (Map<String, String> score : highScores) {
+//            String username = score.get("username");
+//            String time = score.get("time_taken");
+//            long totalSeconds = Long.parseLong(time);
+//            long hours = totalSeconds / 3600;
+//            long minutes = (totalSeconds % 3600) / 60;
+//            long seconds = totalSeconds % 60;
+//
+//
+//            Label scoreLabel;
+//            if (hours > 0) {
+//                scoreLabel = new Label(username + hours + ":" + minutes+ ":" + seconds);
+//            } else {
+//                scoreLabel = new Label(username + minutes + ":" + seconds);
+//            }
+//            scoreLabel.setFont(Font.font("Verdana", FontWeight.NORMAL, 16));
+//            highScoreBox.getChildren().add(scoreLabel);
+//        }
+//        root.getChildren().add(highScoreBox);
+//    }
+
     // Returns true if character hit a wall/object
     private boolean hitBarrier(double wantsToGoToThisX, double wantsToGoToThisY) {
         Iterator<ObstacleTile> it = barrier.iterator();
@@ -398,7 +464,24 @@ public class Character implements OtherGameElements{
         double y = cy + character_image.getLayoutY();
 
         System.out.println("Character X: " + x + ", Y: " + y);
-        System.out.println("Table X range: " + tableMinX + " - " + tableMaxX + ", Y range: " + tableMinY + " - " + tableMaxY);
+//        System.out.println("Table X range: " + tableMinX + " - " + tableMaxX + ", Y range: " + tableMinY + " - " + tableMaxY);
+
+        return (x >= tableMinX && x <= tableMaxX && y >= tableMinY && y <= tableMaxY);
+    }
+
+    private boolean nearLaptopTable() {
+        double tableMinX = 130; // Adjusted slightly for more accurate detection
+        double tableMaxX = 131;
+        double tableMinY = 230;
+        double tableMaxY = 300;
+
+        double cx = character_image.getBoundsInLocal().getWidth() / 2;
+        double cy = character_image.getBoundsInLocal().getHeight() / 2;
+        double x = cx + character_image.getLayoutX();
+        double y = cy + character_image.getLayoutY();
+
+//        System.out.println("Character X: " + x + ", Y: " + y);
+//        System.out.println("Table X range: " + tableMinX + " - " + tableMaxX + ", Y range: " + tableMinY + " - " + tableMaxY);
 
         return (x >= tableMinX && x <= tableMaxX && y >= tableMinY && y <= tableMaxY);
     }
@@ -437,6 +520,43 @@ public class Character implements OtherGameElements{
             stage.show(); // Show the original stage
 
             spaceShooterCompleted = true;
+        });
+    }
+
+    private void startFlappyBird() {
+        root.getChildren().remove(character_image); // Remove character image from the root
+
+        // Save current character state
+        double characterX = character_image.getLayoutX();
+        double characterY = character_image.getLayoutY();
+        boolean wasMovingUp = moveUp;
+        boolean wasMovingDown = moveDown;
+        boolean wasMovingLeft = moveLeft;
+        boolean wasMovingRight = moveRight;
+
+
+        Stage flappyBirdStage = new Stage();
+        try {
+            flappyBird.start(flappyBirdStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        flappyBirdStage.setOnHiding(event -> {
+            // Restore the original game UI
+            root.getChildren().add(character_image);
+
+            // Restore character state
+            character_image.relocate(characterX, characterY);
+            moveUp = wasMovingUp;
+            moveDown = wasMovingDown;
+            moveLeft = wasMovingLeft;
+            moveRight = wasMovingRight;
+
+
+            stage.show(); // Show the original stage
+
+            flappyBirdComplete = true;
         });
     }
 

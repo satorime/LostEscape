@@ -36,14 +36,22 @@ public class World extends Application implements OtherGameElements{
     private double xOffset = 0;
     private double yOffset = 0;
 
+    private double minWidth = 365;
+    private double minHeight = 412;
+
     @Override
     public void start(Stage stage) {
         // First show login screen
         musicManager = new MusicManager();
         mainStage = stage;
 
+        stage.setResizable(false);
+
         stage.setScene(new LoginScene().getLoginScene(stage));
         stage.setTitle("Login");
+        stage.getIcons().add(new Image("Down2.png"));
+        stage.setMinWidth(minWidth);
+        stage.setMinHeight(minHeight);
         stage.show();
     }
 
@@ -73,22 +81,8 @@ public class World extends Application implements OtherGameElements{
         dialog.setOpacity(0);
         root.getChildren().add(dialog);
 
-//        // Dialog Text - Shows when help button is clicked
-//        Text dialog_text = new Text(125, 525, "The object of the game is to escape the room. The player must\n"
-//                + "obtain the key in order to exit the room. Use the arrow keys to\n"
-//                + "move the player around. Look around the objects of the room and\n"
-//                + "press the space bar to check if the key is there. Once the key is\n"
-//                + "obtained, the player may exit the room via the stairs.");
-//        dialog_text.setFont(Font.font("Verdana", 15));
-//        dialog_text.setOpacity(0);
-//        root.getChildren().add(dialog_text);
-
-        // Create Menu Buttons
         createButton("Start", 0, e -> loadGame(stage));
-//        createButton("Help", 1, e -> {
-//            dialog.setOpacity(1);
-//            dialog_text.setOpacity(1);
-//        });
+//        createButton("View Board", 1, e -> Character.loadLeaderboard(stage));
         createButton("Exit", 1, e -> Platform.exit());
     }
 
