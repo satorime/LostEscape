@@ -1,8 +1,10 @@
 package com.example.lostescape.Scene;
 
+import com.example.lostescape.OtherGameElements;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
@@ -18,7 +20,7 @@ import com.example.lostescape.Server.DatabaseManager;
 import com.example.lostescape.Server.Status;
 
 
-public class SignUpScene {
+public class SignUpScene implements OtherGameElements {
     private double xOffset = 0;
     private double yOffset = 0;
 
@@ -114,15 +116,7 @@ public class SignUpScene {
         hBox.getChildren().addAll(vBoxLeft, separator, vBoxRight);
         root.getChildren().add(hBox);
 
-        root.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
-        });
-
-        root.setOnMouseDragged(event -> {
-            stage.setX(event.getScreenX() - xOffset);
-            stage.setY(event.getScreenY() - yOffset);
-        });
+        setupMouseEvents(root, stage);
 
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
@@ -158,9 +152,23 @@ public class SignUpScene {
         return scene;
     }
 
-    private void centerStage(Stage stage) {
+    @Override
+    public void centerStage(Stage stage) {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
         stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+    }
+
+    @Override
+    public void setupMouseEvents(Node root, Stage stage) {
+        root.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        });
     }
 }

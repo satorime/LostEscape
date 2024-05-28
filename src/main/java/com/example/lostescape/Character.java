@@ -8,8 +8,13 @@ import java.util.Map;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,13 +30,14 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import com.example.lostescape.Server.DatabaseManager;
 import com.example.lostescape.Server.CurrentUser;
 import Gunner.SpaceShooter;
 
-public class Character {
+public class Character implements OtherGameElements{
     Pane root;
     Stage stage;
     AnimationTimer timer;
@@ -58,6 +64,9 @@ public class Character {
     private DatabaseManager dbManager;
     private SpaceShooter spaceShooter;
     private boolean spaceShooterCompleted = false;
+
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     public Character(Pane root, Stage stage, Scene scene, LinkedList<ObstacleTile> barrier, ImageView dialog, Text dialogText, ImageView key, ImageView character_image, MusicManager musicManager) {
         this.barrier = barrier;
@@ -246,22 +255,22 @@ public class Character {
                 dbManager.addHighScore(userID, timeTaken);
 
                 root = new Pane();
-                Scene scene = new Scene(root, 737, 800);
+                Scene scene = new Scene(root, 850, 405);
                 stage.setTitle("You Won!");
                 stage.setScene(scene);
                 stage.show();
 
+                centerStage(stage);
+                setupMouseEvents(root, stage);
+
                 // Set background image
-                Image backgroundImage = new Image("menu.jpg");
+                Image backgroundImage = new Image("won-background.jpg");
                 BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
                 Background background = new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
                 root.setBackground(background);
 
-                // Title
-                ImageView title = new ImageView(new Image("You-Won.png"));
-                title.setLayoutX(160);
-                title.setLayoutY(275);
-                root.getChildren().add(title);
+                createButton("Try Again", 0, e -> Platform.exit());
+                createButton("View Board", 1, e -> loadLeaderboard(stage));
 
                 // Display the time taken
                 Text timeText = new Text("Time taken: " + timeTaken + " seconds");
@@ -294,6 +303,42 @@ public class Character {
         } else {
             character_image.setImage(new Image(standingImage));
         }  // if not moving, set character image to standing image
+    }
+
+    public void createButton(String n, int pos, EventHandler<ActionEvent> e) {
+        Button btn = new Button(n);
+        //btn.setTranslateX(145 + pos * 200);
+        btn.setTranslateX(250 + pos * 200);
+        btn.setTranslateY(250);
+        btn.setPrefSize(150, 150);
+        btn.setStyle("-fx-font-family: 'Verdana'; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
+
+        Image image = new Image("/button_image2.png", btn.getWidth(), btn.getHeight(), false, true, true);
+        BackgroundImage bImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, new BackgroundSize(btn.getWidth(), btn.getHeight(), true, true, true, false));
+        Background backGround = new Background(bImage);
+
+        btn.setBackground(backGround);
+        btn.setOnAction(e);
+        root.getChildren().add(btn);
+    }
+
+    public void loadLeaderboard(Stage stage) {
+        musicManager.changeBackgroundMusic("game-background.mp3");
+
+        root = new Pane();
+        Scene scene2 = new Scene(root, 900, 887);
+        stage.setTitle("Leaderboard");
+
+        stage.setScene(scene2);
+        stage.sizeToScene();
+        centerStage(stage);
+        stage.show();
+        setupMouseEvents(root, stage);
+
+        Image leaderboardbg = new Image("leaderboard.jpg");
+        BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
+        Background background = new Background(new BackgroundImage(leaderboardbg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
+        root.setBackground(background);
     }
 
     // Returns true if character hit a wall/object
@@ -372,6 +417,26 @@ public class Character {
             stage.show(); // Show the original stage
 
             spaceShooterCompleted = true;
+        });
+    }
+
+    @Override
+    public void centerStage(Stage stage) {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
+        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+    }
+
+    @Override
+    public void setupMouseEvents(Node root, Stage stage) {
+        root.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
         });
     }
 }

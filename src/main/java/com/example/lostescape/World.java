@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -22,8 +23,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class World extends Application {
-
+public class World extends Application implements OtherGameElements{
     Pane root;
     public static final double tileWidth = 57.1;
     public static final double tileHeight = 56.2;
@@ -33,6 +33,8 @@ public class World extends Application {
     Timer timer;
     Stage mainStage;
     private MusicManager musicManager = new MusicManager(); // Initialize musicManager here
+    private double xOffset = 0;
+    private double yOffset = 0;
 
     @Override
     public void start(Stage stage) {
@@ -43,12 +45,6 @@ public class World extends Application {
         stage.setScene(new LoginScene().getLoginScene(stage));
         stage.setTitle("Login");
         stage.show();
-    }
-
-    private void centerStage(Stage stage) {
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
-        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
     }
 
     public void startGame(Stage stage) {
@@ -77,28 +73,29 @@ public class World extends Application {
         dialog.setOpacity(0);
         root.getChildren().add(dialog);
 
-        // Dialog Text - Shows when help button is clicked
-        Text dialog_text = new Text(125, 525, "The object of the game is to escape the room. The player must\n"
-                + "obtain the key in order to exit the room. Use the arrow keys to\n"
-                + "move the player around. Look around the objects of the room and\n"
-                + "press the space bar to check if the key is there. Once the key is\n"
-                + "obtained, the player may exit the room via the stairs.");
-        dialog_text.setFont(Font.font("Verdana", 15));
-        dialog_text.setOpacity(0);
-        root.getChildren().add(dialog_text);
+//        // Dialog Text - Shows when help button is clicked
+//        Text dialog_text = new Text(125, 525, "The object of the game is to escape the room. The player must\n"
+//                + "obtain the key in order to exit the room. Use the arrow keys to\n"
+//                + "move the player around. Look around the objects of the room and\n"
+//                + "press the space bar to check if the key is there. Once the key is\n"
+//                + "obtained, the player may exit the room via the stairs.");
+//        dialog_text.setFont(Font.font("Verdana", 15));
+//        dialog_text.setOpacity(0);
+//        root.getChildren().add(dialog_text);
 
         // Create Menu Buttons
         createButton("Start", 0, e -> loadGame(stage));
-        createButton("Help", 1, e -> {
-            dialog.setOpacity(1);
-            dialog_text.setOpacity(1);
-        });
-        createButton("Exit", 2, e -> Platform.exit());
+//        createButton("Help", 1, e -> {
+//            dialog.setOpacity(1);
+//            dialog_text.setOpacity(1);
+//        });
+        createButton("Exit", 1, e -> Platform.exit());
     }
 
     public void createButton(String n, int pos, EventHandler<ActionEvent> e) {
         Button btn = new Button(n);
-        btn.setTranslateX(145 + pos * 200);
+        //btn.setTranslateX(145 + pos * 200);
+        btn.setTranslateX(250 + pos * 200);
         btn.setTranslateY(250);
         btn.setPrefSize(150, 150);
         btn.setStyle("-fx-font-family: 'Verdana'; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");
@@ -153,6 +150,7 @@ public class World extends Application {
         stage.sizeToScene();
         centerStage(stage);
         stage.show();
+        setupMouseEvents(root, stage);
 
         Image houseBackgroundImage = new Image("game-background.jpg");
         BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
@@ -223,5 +221,25 @@ public class World extends Application {
         ObstacleTile tile = new ObstacleTile(w, h, x, y);
         root.getChildren().add(tile);
         barrier.add(tile);
+    }
+
+    @Override
+    public void centerStage(Stage stage) {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setX((screenBounds.getWidth() - stage.getWidth()) / 2);
+        stage.setY((screenBounds.getHeight() - stage.getHeight()) / 2);
+    }
+
+    @Override
+    public void setupMouseEvents(Node root, Stage stage) {
+        root.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        root.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        });
     }
 }
