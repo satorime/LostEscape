@@ -16,7 +16,6 @@ public class SplashScreen {
     public void start(Stage primaryStage) {
         Stage splashStage = new Stage(StageStyle.TRANSPARENT);
 
-        // Load image from resources
         Image splashImage = new Image(Objects.requireNonNull(getClass().getResource("/boss.png")).toExternalForm());
         ImageView splashImageView = new ImageView(splashImage);
         splashImageView.setPreserveRatio(true);
@@ -29,7 +28,6 @@ public class SplashScreen {
         splashStage.setScene(scene);
         splashStage.show();
 
-        // Close splash screen after a duration
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> splashStage.close()));
         timeline.setCycleCount(1);
         timeline.play();
