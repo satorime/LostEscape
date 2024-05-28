@@ -57,11 +57,4 @@ public class BossEnemy extends Enemy {
         gc.drawImage(boss, x - WIDTH / 2, y - HEIGHT / 2, WIDTH * 2, HEIGHT * 2);
     }
 
-    public void hit() {
-        health--;
-        if (health <= 0) {
-            setDead(true);
-        }
-    }
-
 }

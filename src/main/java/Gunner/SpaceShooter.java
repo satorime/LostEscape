@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -41,6 +42,8 @@ public class SpaceShooter extends Application {
     private boolean levelUpMessageDisplayed = false;
     private boolean levelUpShown = false;
     private Stage primaryStage;
+    private Image backgroundImage;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -54,6 +57,9 @@ public class SpaceShooter extends Application {
         primaryStage.setTitle("Space Shooter");
         primaryStage.setResizable(false);
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
+
+        backgroundImage = new Image("tile.jpeg");
+
         scoreLabel.setTranslateX(10);
         scoreLabel.setTranslateY(10);
         scoreLabel.setTextFill(Color.BLACK);
@@ -85,6 +91,8 @@ public class SpaceShooter extends Application {
                     reset = false;
                 }
                 gc.clearRect(0, 0, WIDTH, HEIGHT);
+
+                drawBackground(gc);
 
                 if (now - lastEnemySpawned > 1_000_000_000) {
                     spawnEnemy();
@@ -136,7 +144,7 @@ public class SpaceShooter extends Application {
                     }
                 }
 
-                if (score >= 300) {
+                if (score >= 1500) {
                     stop();
 //                    primaryStage.close();
                     primaryStage.hide();
@@ -147,6 +155,14 @@ public class SpaceShooter extends Application {
 
         gameLoop.start();
         primaryStage.show();
+    }
+
+    private void drawBackground(GraphicsContext gc) {
+        for (int i = 0; i < WIDTH; i += (int) backgroundImage.getWidth()) {
+            for (int j = 0; j < HEIGHT; j += (int) backgroundImage.getHeight()) {
+                gc.drawImage(backgroundImage, i, j);
+            }
+        }
     }
 
     private void spawnEnemy() {
@@ -176,6 +192,7 @@ public class SpaceShooter extends Application {
         List<Bullet> bullets = new ArrayList<>();
         List<Enemy> enemies = new ArrayList<>();
         List<PowerUp> powerUps = new ArrayList<>();
+        List<UltimateBullet> ultimateBullets = new ArrayList<>();
         List<EnemyBullet> enemyBullets = new ArrayList<>();
 
         for (GameObject obj : gameObjects) {
@@ -183,13 +200,16 @@ public class SpaceShooter extends Application {
                 bullets.add((Bullet) obj);
             } else if (obj instanceof Enemy) {
                 enemies.add((Enemy) obj);
-            }else if (obj instanceof EnemyBullet) {
+            } else if (obj instanceof EnemyBullet) {
                 enemyBullets.add((EnemyBullet) obj);
             } else if (obj instanceof PowerUp) {
                 powerUps.add((PowerUp) obj);
+            } else if (obj instanceof UltimateBullet) {
+                ultimateBullets.add((UltimateBullet) obj);
             }
         }
 
+        // Collision detection between regular bullets and enemies
         for (Bullet bullet : bullets) {
             for (Enemy enemy : enemies) {
                 if (bullet.getBounds().intersects(enemy.getBounds())) {
@@ -219,15 +239,38 @@ public class SpaceShooter extends Application {
             }
         }
 
-
+        // Collision detection between enemy bullets and player
         for (EnemyBullet bullet : enemyBullets) {
             if (bullet.getBounds().intersects(player.getBounds())) {
                 handlePlayerDamage();
+                score -= 50;
+                scoreLabel.setText("Score: " + score);
+                bullet.setDead(true);
+            }
+        }
+
+        // Collision detection between UltimateBullet and enemies
+        for (UltimateBullet ultimateBullet : ultimateBullets) {
+            for (Enemy enemy : enemies) {
+                if (ultimateBullet.getBounds().intersects(enemy.getBounds())) {
+                    if (enemy instanceof BossEnemy) {
+                        showTempMessage("DELE LANG", WIDTH / 3 + 20, HEIGHT / 2 - 150, 3);
+                        ultimateBullet.setDead(true);
+                        enemy.setDead(true);
+                        score += 20;
+                    } else {
+                        enemy.setDead(true);
+                        score += 10;
+                    }
+                    if (ultimateBullet.getY() + ultimateBullet.getHeight() / 2 < 0) {
+                        ultimateBullet.setDead(true);
+                    }
+                    scoreLabel.setText("Score: " + score);
+                }
             }
         }
 
         if (score % 100 == 0 && score > 0 && !levelUpShown) {
-//            showTempMessage("Level Up!", WIDTH / 2 - 40, HEIGHT * 2, 2);
             levelUpShown = true;
         } else if (score % 100 != 0) {
             levelUpShown = false;
@@ -235,6 +278,7 @@ public class SpaceShooter extends Application {
 
         checkScore();
     }
+
 
     private void handlePlayerDamage() {
         new Thread(() -> {
@@ -275,7 +319,7 @@ public class SpaceShooter extends Application {
         scoreLabel.setText("Score: " + score);
         gameObjects.add(player);
         reset = true;
-        Text lostMessage = new Text("You lost! Skill Issue~~");
+        Text lostMessage = new Text("You lost! Skill Issue~");
         lostMessage.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         lostMessage.setFill(Color.RED);
         lostMessage.setX((WIDTH - lostMessage.getLayoutBounds().getWidth()) / 2);
@@ -310,6 +354,8 @@ public class SpaceShooter extends Application {
                 case SPACE:
                     player.shoot(newObjects);
                     break;
+                case SHIFT:
+                    player.shootULT(newObjects);
             }
         });
 

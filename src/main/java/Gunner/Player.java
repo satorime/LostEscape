@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 
 import java.util.List;
 
-
 public class Player extends GameObject {
 
     private static final int WIDTH = 20;
@@ -19,7 +18,8 @@ public class Player extends GameObject {
     private Image playerImage;
     private int hitCount = 0;
     private static final int MAX_HITS = 2;
-
+    private long lastUltTime; // To track the time of the last ultimate shot
+    private static final long ULT_COOLDOWN = 5000; // Cooldown time in milliseconds
 
     @Override
     public double getWidth() {
@@ -34,14 +34,7 @@ public class Player extends GameObject {
     public Player(double x, double y) {
         super(x, y, 30, 30);
         playerImage = new Image("Up2.png");
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
+        lastUltTime = System.currentTimeMillis() - ULT_COOLDOWN; // Initialize to allow immediate first shot
     }
 
     @Override
@@ -63,13 +56,10 @@ public class Player extends GameObject {
         }
     }
 
-
     @Override
     public void render(GraphicsContext gc) {
         gc.drawImage(playerImage, x - (WIDTH / 2), y - (HEIGHT / 2), WIDTH * 1.5, HEIGHT * 1.5);
     }
-
-
 
     public void setMoveLeft(boolean moveLeft) {
         this.moveLeft = moveLeft;
@@ -103,19 +93,19 @@ public class Player extends GameObject {
         return dead;
     }
 
-    public void takeDamage(){
+    public void takeDamage() {
         hitCount++;
-        if(hitCount >= MAX_HITS){
+        if (hitCount >= MAX_HITS) {
             setDead(true);
         }
     }
 
-    public int getHitCount(){
-        return hitCount;
+    public void shootULT(List<GameObject> newObjects) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastUltTime >= ULT_COOLDOWN) {
+            UltimateBullet ultimateBullet = new UltimateBullet(x, y - HEIGHT / 2 - UltimateBullet.HEIGHT / 2);
+            newObjects.add(ultimateBullet);
+            lastUltTime = currentTime; // Update the last shot time
+        }
     }
-    public void revive() {
-        health = 3;
-        setDead(false);
-    }
-
 }
