@@ -75,7 +75,6 @@ public class World extends Application implements OtherGameElements{
         root.setBackground(background);
 
 
-
         Button backButton = new Button("Back to Login");
         backButton.setMaxWidth(Double.MAX_VALUE);
         Button setting = new Button("⚙");

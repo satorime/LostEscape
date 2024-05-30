@@ -85,6 +85,7 @@ public class ProfileSetting implements OtherGameElements {
         Button back = new Button("◀");
         back.setPadding(new Insets(5));
         back.setAlignment(Pos.TOP_LEFT);
+        back.setStyle("-fx-translate-x:20px; -fx-translate-y:20px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
         back.getStyleClass().add("login-btn");
 
         back.setOnAction(event -> {

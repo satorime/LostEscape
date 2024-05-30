@@ -64,7 +64,7 @@ public class SplashScreen {
             });
         }).start();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(7), event -> {
             splashStage.close();
             scheduler.shutdown();
         }));
