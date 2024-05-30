@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import FlappyRato.FlappyBird;
 import javafx.animation.AnimationTimer;
@@ -352,23 +353,28 @@ public class Character implements OtherGameElements{
         root.setBackground(background);
 
         List<Map<String, String>> highScores = dbManager.getHighScores();
+
+        // Ensure only the top 10 scores are displayed
+        List<Map<String, String>> topTenScores = highScores.stream().limit(10).collect(Collectors.toList());
+
         VBox highScoreBox = new VBox();
-        double highScoreBoxX = (scene2.getWidth() - highScoreBox.getBoundsInLocal().getWidth()) / 2;
-        double highScoreBoxY = (scene2.getHeight() - highScoreBox.getBoundsInLocal().getHeight()) / 2;
-
-        //highScoreBox.setLayoutX(highScoreBoxX);
-        //highScoreBox.setLayoutY(highScoreBoxY);
-
-        highScoreBox.setLayoutX(400);
-        highScoreBox.setLayoutY(300);
+        highScoreBox.setLayoutX(335);
+        highScoreBox.setLayoutY(315);
         highScoreBox.setSpacing(5);
-        for (Map<String, String> score : highScores) {
+
+        Label boardlabel = new Label("NAME\tSCORE");
+        boardlabel.setFont(Font.font("Verdana", FontWeight.BOLD, 25));
+        boardlabel.setStyle("-fx-translate-y:-10px");
+        highScoreBox.getChildren().add(boardlabel);
+
+        for (Map<String, String> score : topTenScores) {
             String username = score.get("username");
             String time = score.get("time_taken");
-            Label scoreLabel = new Label(username + "\t" + time + "s");
-            scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 25));
+            Label scoreLabel = new Label(username + "\t\t\t" + time + "s");
+            scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
             highScoreBox.getChildren().add(scoreLabel);
         }
+
         root.getChildren().add(highScoreBox);
     }
 

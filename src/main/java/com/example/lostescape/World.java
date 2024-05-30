@@ -5,10 +5,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.example.lostescape.Scene.LoginScene;
+import com.example.lostescape.Server.ProfileSetting;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -71,6 +74,24 @@ public class World extends Application implements OtherGameElements{
         Background background = new Background(new BackgroundImage(startBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
         root.setBackground(background);
 
+
+
+        Button backButton = new Button("Back to Login");
+        backButton.setMaxWidth(Double.MAX_VALUE);
+        Button setting = new Button("⚙");
+        setting.getStyleClass().add("exit-btn");
+
+        setting.setOnAction(event -> {
+            ProfileSetting profileSetting = new ProfileSetting();
+            stage.setScene(profileSetting.getSettingScene(stage));
+        });
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(setting);
+
+        StackPane.setAlignment(setting, Pos.TOP_RIGHT);
+        StackPane.setMargin(setting, new Insets(15));
+
         // Dialog Text box - Shows when help button is clicked
         ImageView dialog = new ImageView(new Image("button_image.png"));
         dialog.setLayoutX(0);
@@ -80,16 +101,17 @@ public class World extends Application implements OtherGameElements{
         dialog.setPreserveRatio(true);
         dialog.setOpacity(0);
         root.getChildren().add(dialog);
+        ProfileSetting profileSetting = new ProfileSetting();
 
         createButton("Start", 0, e -> loadGame(stage));
-//        createButton("View Board", 1, e -> Character.loadLeaderboard(stage));
-        createButton("Exit", 1, e -> Platform.exit());
+        createButton("Settings", 1, e -> stage.setScene(profileSetting.getSettingScene(stage)));
+        createButton("Exit", 2, e -> Platform.exit());
     }
 
     public void createButton(String n, int pos, EventHandler<ActionEvent> e) {
         Button btn = new Button(n);
         //btn.setTranslateX(145 + pos * 200);
-        btn.setTranslateX(250 + pos * 200);
+        btn.setTranslateX(145 + pos * 200);
         btn.setTranslateY(250);
         btn.setPrefSize(150, 150);
         btn.setStyle("-fx-font-family: 'Verdana'; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;");

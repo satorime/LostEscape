@@ -1,6 +1,7 @@
 package com.example.lostescape.Scene;
 
 import com.example.lostescape.OtherGameElements;
+import com.example.lostescape.Server.ProfileSetting;
 import com.example.lostescape.World;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -105,7 +106,10 @@ public class LoginScene implements OtherGameElements {
         imageView.setFill(pattern);
         imageView.setEffect(new DropShadow(30, Color.BROWN));
 
-        vBoxRight.getChildren().addAll(imageView);
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(imageView);
+
+        vBoxRight.getChildren().addAll(stackPane);
 
         Separator separator = new Separator();
         separator.setOrientation(javafx.geometry.Orientation.HORIZONTAL);

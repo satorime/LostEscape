@@ -5,8 +5,6 @@
 
 .hbox {
     -fx-background-color: linear-gradient(to bottom, #de9a60, #003300);
-    //-fx-border-radius: 40;
-    //-fx-background-radius: 40;
     -fx-padding: 20;
 }
 
@@ -67,6 +65,25 @@
     -fx-border-radius: 20;
 }
 
+.change-btn {
+    -fx-background-color: #003300;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 10;
+    -fx-border-color: white;
+    -fx-border-width: 0.5px;
+    -fx-border-radius: 20;
+    -fx-translate-y: 10px;
+}
+
+.change-btn:hover {
+    -fx-background-color: white;
+    -fx-text-fill: #003300;
+}
+
+
 .login-btn:hover {
     -fx-background-color: white;
     -fx-text-fill: #003300;
@@ -87,6 +104,7 @@
     -fx-font-size: 13px;
     -fx-border-color: white;
     -fx-border-weight: 0.5px;
+    -fx-font-weight: bold;
 }
 
 .exit-btn:hover {
