@@ -356,17 +356,17 @@ public class Character implements OtherGameElements{
         double highScoreBoxX = (scene2.getWidth() - highScoreBox.getBoundsInLocal().getWidth()) / 2;
         double highScoreBoxY = (scene2.getHeight() - highScoreBox.getBoundsInLocal().getHeight()) / 2;
 
-        highScoreBox.setLayoutX(highScoreBoxX);
-        highScoreBox.setLayoutY(highScoreBoxY);
+        //highScoreBox.setLayoutX(highScoreBoxX);
+        //highScoreBox.setLayoutY(highScoreBoxY);
+
+        highScoreBox.setLayoutX(400);
+        highScoreBox.setLayoutY(300);
         highScoreBox.setSpacing(5);
-        Label highScoreTitle = new Label("High Scores:");
-        highScoreTitle.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
-        highScoreBox.getChildren().add(highScoreTitle);
         for (Map<String, String> score : highScores) {
             String username = score.get("username");
             String time = score.get("time_taken");
-            Label scoreLabel = new Label(username + ": " + time + " seconds");
-            scoreLabel.setFont(Font.font("Verdana", FontWeight.NORMAL, 16));
+            Label scoreLabel = new Label(username + "\t" + time + "s");
+            scoreLabel.setFont(Font.font("Verdana", FontWeight.BOLD, 25));
             highScoreBox.getChildren().add(scoreLabel);
         }
         root.getChildren().add(highScoreBox);
