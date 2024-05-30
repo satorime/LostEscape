@@ -32,7 +32,7 @@ public class World extends Application implements OtherGameElements{
     Text timerDisplay;
     Timer timer;
     Stage mainStage;
-    private MusicManager musicManager = new MusicManager(); // Initialize musicManager here
+    private MusicManager musicManager = new MusicManager();
     private double xOffset = 0;
     private double yOffset = 0;
 

@@ -5,9 +5,9 @@ import javafx.scene.image.Image;
 
 public class UltimateBullet extends GameObject {
 
-    protected static final int WIDTH = 150; // Increased size
-    protected static final int HEIGHT = 150; // Increased size
-    private static final double SPEED = 2; // Decreased speed
+    protected static final int WIDTH = 150;
+    protected static final int HEIGHT = 150;
+    private static final double SPEED = 2;
     private Image ultimateBulletImage;
     private boolean dead;
 

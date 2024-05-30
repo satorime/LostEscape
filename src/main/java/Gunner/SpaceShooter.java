@@ -1,5 +1,6 @@
 package Gunner;
 
+import com.example.lostescape.MusicManager;
 import javafx.animation.AnimationTimer;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -44,6 +45,7 @@ public class SpaceShooter extends Application {
     private Stage primaryStage;
     private Image backgroundImage;
 
+    private MusicManager musicManager;
 
     public static void main(String[] args) {
         launch(args);
@@ -52,7 +54,7 @@ public class SpaceShooter extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        primaryStage.initStyle(StageStyle.UNDECORATED); // This line hides the close, minimize, and maximize buttons
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Space Shooter");
         primaryStage.setResizable(false);
@@ -73,7 +75,6 @@ public class SpaceShooter extends Application {
         gameObjects.add(player);
         initEventHandlers(scene);
 
-        // Disable close button
         primaryStage.setOnCloseRequest(event -> {
             if (score < 200) {
                 event.consume();
@@ -104,7 +105,7 @@ public class SpaceShooter extends Application {
                     lastPowerUpSpawned = now;
                 }
 
-                if (score >= 100 && score % 100 == 0) {
+                if (score >= 200 && score % 200 == 0) {
                     boolean bossExists = false;
                     for (GameObject obj : gameObjects) {
                         if (obj instanceof BossEnemy) {
@@ -178,7 +179,7 @@ public class SpaceShooter extends Application {
             }
         }
 
-        if (!bossExists && score % 100 == 0 && score > 0) {
+        if (!bossExists && score % 200 == 0 && score > 0) {
             BossEnemy boss = new BossEnemy(x, -50);
             gameObjects.add(boss);
             showTempMessage("How's your day, everyone?!", WIDTH / 3 - 30, HEIGHT / 2 - 100, 5);
@@ -209,7 +210,6 @@ public class SpaceShooter extends Application {
             }
         }
 
-        // Collision detection between regular bullets and enemies
         for (Bullet bullet : bullets) {
             for (Enemy enemy : enemies) {
                 if (bullet.getBounds().intersects(enemy.getBounds())) {
@@ -239,7 +239,6 @@ public class SpaceShooter extends Application {
             }
         }
 
-        // Collision detection between enemy bullets and player
         for (EnemyBullet bullet : enemyBullets) {
             if (bullet.getBounds().intersects(player.getBounds())) {
                 handlePlayerDamage();
@@ -249,12 +248,12 @@ public class SpaceShooter extends Application {
             }
         }
 
-        // Collision detection between UltimateBullet and enemies
         for (UltimateBullet ultimateBullet : ultimateBullets) {
             for (Enemy enemy : enemies) {
                 if (ultimateBullet.getBounds().intersects(enemy.getBounds())) {
                     if (enemy instanceof BossEnemy) {
                         showTempMessage("DELE LANG", WIDTH / 3 + 20, HEIGHT / 2 - 150, 3);
+//                        new Thread(() -> musicManager.playSoundEffect("sound/cool.mp3")).start();
                         ultimateBullet.setDead(true);
                         enemy.setDead(true);
                         score += 20;
@@ -299,7 +298,7 @@ public class SpaceShooter extends Application {
         for (Enemy enemy : enemies) {
             if (enemy.getY() + enemy.getHeight() / 2 >= HEIGHT) {
                 enemy.setDead(true);
-                enemy.SPEED = enemy.SPEED + 0.1;
+                enemy.SPEED = enemy.SPEED + 0.01;
                 numLives--;
                 score -= 10;
                 lifeLabel.setText("Lives: " + numLives);
@@ -335,6 +334,7 @@ public class SpaceShooter extends Application {
     }
 
     private void initEventHandlers(Scene scene) {
+        musicManager = new MusicManager();
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case A:
@@ -353,6 +353,7 @@ public class SpaceShooter extends Application {
                     break;
                 case SPACE:
                     player.shoot(newObjects);
+                    musicManager.playSoundEffect("sound/bullet-sound.mp3");
                     break;
                 case SHIFT:
                     player.shootULT(newObjects);

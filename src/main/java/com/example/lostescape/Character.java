@@ -80,7 +80,6 @@ public class Character implements OtherGameElements{
         startTime = System.currentTimeMillis();
         dbManager = DatabaseManager.getInstance();
 
-        // Initialize the Character's Walking Images Lists
         walkingUpImageList = new ArrayList<>();
         walkingUpImageList.add(new Image("Up1.png"));
         walkingUpImageList.add(new Image("Up2.png"));
@@ -106,10 +105,9 @@ public class Character implements OtherGameElements{
         rightCount = 0;
         leftCount = 0;
 
-        this.spaceShooter = new SpaceShooter(); // Initialize the SpaceShooter game
-        this.flappyBird = new FlappyBird(); // Initialize the FlappyBird game
+        this.spaceShooter = new SpaceShooter();
+        this.flappyBird = new FlappyBird();
 
-        // Set EventHandler on arrow key press/release
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent e) {
@@ -119,10 +117,10 @@ public class Character implements OtherGameElements{
                 else if (code == KeyCode.RIGHT) { moveRight  = true; }
                 else if (code == KeyCode.LEFT) { moveLeft  = true; }
                 else if (code == KeyCode.SHIFT) { run = true; }
-                else if (code == KeyCode.SPACE) {  // Space pressed - check for key and pop up dialog message
+                else if (code == KeyCode.SPACE) {
                     if (nearLivingRoomTable()) {
                         if (spaceShooterCompleted) {
-                            dialogText.setText("Clue: A place u can make 'something'~");
+                            dialogText.setText("Clue: Min X = 580 & Max X = 600.");
                             dialogText.setOpacity(1);
                             dialog.setOpacity(1);
 
@@ -134,7 +132,7 @@ public class Character implements OtherGameElements{
                         }
                     }else if(nearLaptopTable()){
                         if(flappyBirdComplete){
-                            dialogText.setText("Clue: A place u can make 'something'~");
+                            dialogText.setText("Clue: A place that could make you 'wet'.");
                             dialogText.setOpacity(1);
                             dialog.setOpacity(1);
 
@@ -235,12 +233,11 @@ public class Character implements OtherGameElements{
     }
 
     public long getTimeTaken() {
-        return (System.currentTimeMillis() - startTime - pauseTime) / 1000; // Return the time taken in seconds
+        return (System.currentTimeMillis() - startTime - pauseTime) / 1000;
     }
 
-    // Move character in the correct direction and also check for key/exit
     private void moveCharacter(int dx, int dy) {
-        if (dx != 0 || dy != 0) {  // Only move if character has "speed" - added/subtracted from the key presses
+        if (dx != 0 || dy != 0) {
             double cx = character_image.getBoundsInLocal().getWidth() / 2;
             double cy = character_image.getBoundsInLocal().getHeight() / 2;
 
@@ -249,9 +246,9 @@ public class Character implements OtherGameElements{
 
             // Check if character should move
             if (x - cx >= 0 &&
-                    x + cx <= 737 &&  // Scene width
+                    x + cx <= 737 &&
                     y - cy >= 0 &&
-                    y + cy <= 800 && // Scene height
+                    y + cy <= 800 &&
                     !hitBarrier(x - cx, y - cy)) {
                 character_image.relocate(x - cx, y - cy);
             }
@@ -262,12 +259,11 @@ public class Character implements OtherGameElements{
             }
 
             // Check if character found key and is near the door
-            // Won the game!
             if (foundKey && x >= 137 && x <= 257 && y >= 757 && y <= 778) {
-                long timeTaken = getTimeTaken(); // Get the time taken by the user
-                timer.stop(); // Need to end animation timer or else it will keep entering this if statement and pop up the win screen infinitely
+                long timeTaken = getTimeTaken();
+                timer.stop();
 
-                int userID = CurrentUser.userID; // Get the current user ID from a global state or session
+                int userID = CurrentUser.userID;
                 dbManager.addHighScore(userID, timeTaken);
 
                 root = new Pane();
@@ -279,7 +275,6 @@ public class Character implements OtherGameElements{
                 centerStage(stage);
                 setupMouseEvents(root, stage);
 
-                // Set background image
                 Image backgroundImage = new Image("won-background.jpg");
                 BackgroundSize size = new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false);
                 Background background = new Background(new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size));
@@ -318,7 +313,7 @@ public class Character implements OtherGameElements{
             }
         } else {
             character_image.setImage(new Image(standingImage));
-        }  // if not moving, set character image to standing image
+        }
     }
 
     public void createButton(String n, int pos, EventHandler<ActionEvent> e) {
@@ -453,7 +448,7 @@ public class Character implements OtherGameElements{
     }
 
     private boolean nearLivingRoomTable() {
-        double tableMinX = 150; // Adjusted slightly for more accurate detection
+        double tableMinX = 150;
         double tableMaxX = 250;
         double tableMinY = 490;
         double tableMaxY = 610;
@@ -470,7 +465,7 @@ public class Character implements OtherGameElements{
     }
 
     private boolean nearLaptopTable() {
-        double tableMinX = 130; // Adjusted slightly for more accurate detection
+        double tableMinX = 130;
         double tableMaxX = 131;
         double tableMinY = 230;
         double tableMaxY = 300;
@@ -487,7 +482,7 @@ public class Character implements OtherGameElements{
     }
 
     private void startSpaceShooterGame() {
-        root.getChildren().remove(character_image); // Remove character image from the root
+        root.getChildren().remove(character_image);
 
         // Save current character state
         double characterX = character_image.getLayoutX();
@@ -506,10 +501,8 @@ public class Character implements OtherGameElements{
         }
 
         spaceShooterStage.setOnHiding(event -> {
-            // Restore the original game UI
             root.getChildren().add(character_image);
 
-            // Restore character state
             character_image.relocate(characterX, characterY);
             moveUp = wasMovingUp;
             moveDown = wasMovingDown;
@@ -517,16 +510,15 @@ public class Character implements OtherGameElements{
             moveRight = wasMovingRight;
 
 
-            stage.show(); // Show the original stage
+            stage.show();
 
             spaceShooterCompleted = true;
         });
     }
 
     private void startFlappyBird() {
-        root.getChildren().remove(character_image); // Remove character image from the root
+        root.getChildren().remove(character_image);
 
-        // Save current character state
         double characterX = character_image.getLayoutX();
         double characterY = character_image.getLayoutY();
         boolean wasMovingUp = moveUp;
@@ -543,10 +535,8 @@ public class Character implements OtherGameElements{
         }
 
         flappyBirdStage.setOnHiding(event -> {
-            // Restore the original game UI
             root.getChildren().add(character_image);
 
-            // Restore character state
             character_image.relocate(characterX, characterY);
             moveUp = wasMovingUp;
             moveDown = wasMovingDown;
@@ -554,7 +544,7 @@ public class Character implements OtherGameElements{
             moveRight = wasMovingRight;
 
 
-            stage.show(); // Show the original stage
+            stage.show();
 
             flappyBirdComplete = true;
         });

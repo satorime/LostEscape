@@ -14,6 +14,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.image.Image;
 import javafx.animation.AnimationTimer;
 import javafx.stage.StageStyle;
+import com.example.lostescape.MusicManager;
 
 import java.util.Map;
 import java.util.LinkedHashMap;
@@ -23,6 +24,7 @@ public class FlappyBird extends Application {
 
     private Scene scene;
     private GraphicsContext ctx;
+    private MusicManager musicManager;
 
     public static Font appFont = Font.loadFont(Objects.requireNonNull(FlappyBird.class.getResource("/images/04b_19.ttf")).toExternalForm(), 42);
     public static Color appColor = Color.web("#543847");
@@ -30,6 +32,8 @@ public class FlappyBird extends Application {
     private double height = 600;
     private double minWidth = 365;
     private double minHeight = 412;
+    private int previousScore = 0;
+
 
     public static Map<String, GameObject> gameObjects = new LinkedHashMap<String, GameObject>();
     private Bird bird;
@@ -42,12 +46,12 @@ public class FlappyBird extends Application {
 
     public static int score = 0;
     public static int highscore = 0;
-    private Stage primaryStage;  // Reference to the primary stage
+    private Stage primaryStage;
 
 
     public void start(Stage stage) {
-        primaryStage = stage;  // Store the reference to the stage
-        primaryStage.initStyle(StageStyle.UNDECORATED); // This line hides the close, minimize, and maximize buttons
+        primaryStage = stage;
+        primaryStage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("Flappy bird");
         stage.getIcons().add(new Image("boss.png"));
         stage.setMinWidth(minWidth);
@@ -85,12 +89,15 @@ public class FlappyBird extends Application {
     }
 
     private void setInputHandlers(Scene scene) {
+        musicManager = new MusicManager();
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.SPACE)
+                musicManager.playSoundEffect("sound/jump.mp3");
                 inputHandler(-1, -1);
         });
 
         scene.setOnMousePressed(e -> {
+            musicManager.playSoundEffect("sound/jump.mp3");
             inputHandler(e.getX(), e.getY());
         });
     }
@@ -127,15 +134,21 @@ public class FlappyBird extends Application {
         gameObjects.put("restart",      restart);
         gameObjects.put("score",        new Score(width, height, ctx));
         gameObjects.put("title",        new Title(width, height, ctx));
-        gameObjects.put("gameover",     new GameOver(width, height, ctx));
+        gameObjects.put("gameover",     new GameOver(width, height, ctx, musicManager));
     }
 
     private void updateGame(long now) {
         for (GameObject gameObject : gameObjects.values())
             gameObject.update(now);
 
-        // Check if the score has reached 10
-        if (FlappyBird.score >= 10) {
+        if (FlappyBird.score > previousScore) {
+            for (int i = previousScore + 1; i <= FlappyBird.score; i++) {
+                musicManager.playSoundEffect("sound/pass.mp3");
+            }
+            previousScore = FlappyBird.score;
+        }
+
+        if (FlappyBird.score >= 15) {
             timer.stop();
             Platform.runLater(() -> primaryStage.hide());
         }
